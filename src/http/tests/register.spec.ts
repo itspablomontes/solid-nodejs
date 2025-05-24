@@ -19,9 +19,9 @@ describe("Register Service", () => {
   });
   it("should hash user password upon registration", async () => {
     const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
+    const sut = new RegisterService(usersRepository);
 
-    const { user } = await registerService.execute({
+    const { user } = await sut.execute({
       name: "John Doe",
       email: "johndoe@gmail.com",
       password: "mynameisjohndoe",
@@ -36,16 +36,16 @@ describe("Register Service", () => {
   });
   it("should not allow two users with the same email", async () => {
     const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
+    const sut = new RegisterService(usersRepository);
 
-    await registerService.execute({
+    await sut.execute({
       name: "John Doe",
       email: "johndoe@gmail.com",
       password: "mynameisjohndoe",
     });
 
     await expect(() =>
-      registerService.execute({
+      sut.execute({
         name: "John Doe",
         email: "johndoe@gmail.com",
         password: "mynameisjohndoe",

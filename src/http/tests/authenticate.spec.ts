@@ -7,7 +7,7 @@ import { InvalidCredentialsError } from "../errors/invalid.credentials";
 describe("Authenticate Service", () => {
   it("should be able to authenticate", async () => {
     const usersRepository = new InMemoryUsersRepository();
-    const authenticateService = new AuthenticateService(usersRepository);
+    const sut = new AuthenticateService(usersRepository);
 
     await usersRepository.create({
       name: "John Doe",
@@ -15,17 +15,17 @@ describe("Authenticate Service", () => {
       password_hash: await hash("1223342", 6),
     });
 
-    const { user } = await authenticateService.execute({
+    const { user } = await sut.execute({
       email: "johndoe@gmail.com",
       password: "mynameisjohndoe",
     });
   });
   it("should not be able to authenticate with wrong email", async () => {
     const usersRepository = new InMemoryUsersRepository();
-    const authenticateService = new AuthenticateService(usersRepository);
+    const sut = new AuthenticateService(usersRepository);
 
     await expect(() =>
-      authenticateService.execute({
+      sut.execute({
         email: "johndoe@gmail.com",
         password: "mynameisjohndoe",
       }),
