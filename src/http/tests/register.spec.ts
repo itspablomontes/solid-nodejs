@@ -4,7 +4,7 @@ import { InMemoryUsersRepository } from "../repositories/inMemory/in.memory.user
 import bcrypt from "bcryptjs";
 import { UserAlreadyExistsError } from "../errors/user.already.exists";
 import { IUsersRepository } from "../interfaces/user.repository.interface";
-import { beforeEach } from "node:test";
+import { beforeEach } from "vitest";
 
 let usersRepository: IUsersRepository;
 let sut: RegisterService;
@@ -16,10 +16,7 @@ describe("Register Service", () => {
   });
 
   it("should be able to register", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
-
-    const { user } = await registerService.execute({
+    const { user } = await sut.execute({
       name: "John Doe",
       email: "johndoe@gmail.com",
       password: "mynameisjohndoe",
@@ -29,9 +26,6 @@ describe("Register Service", () => {
   });
 
   it("should hash user password upon registration", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const sut = new RegisterService(usersRepository);
-
     const { user } = await sut.execute({
       name: "John Doe",
       email: "johndoe@gmail.com",
@@ -47,9 +41,6 @@ describe("Register Service", () => {
   });
 
   it("should not allow two users with the same email", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const sut = new RegisterService(usersRepository);
-
     await sut.execute({
       name: "John Doe",
       email: "johndoe@gmail.com",
