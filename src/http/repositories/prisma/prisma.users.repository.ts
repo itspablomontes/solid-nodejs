@@ -9,12 +9,27 @@ export class PrismaUsersRepository implements IUsersRepository {
     });
     return user;
   }
+
   async getByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: {
         email,
       },
     });
+    return user;
+  }
+
+  async getById(id: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
     return user;
   }
 }
