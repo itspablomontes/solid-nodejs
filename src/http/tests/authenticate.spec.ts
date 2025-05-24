@@ -3,8 +3,18 @@ import { InMemoryUsersRepository } from "../repositories/inMemory/in.memory.user
 import { AuthenticateService } from "../services/authenticate.service";
 import { hash } from "bcryptjs";
 import { InvalidCredentialsError } from "../errors/invalid.credentials";
+import { beforeEach } from "node:test";
+import { IUsersRepository } from "../interfaces/user.repository.interface";
+
+let usersRepository: IUsersRepository;
+let sut: AuthenticateService;
 
 describe("Authenticate Service", () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository();
+    sut = new AuthenticateService(usersRepository);
+  });
+
   it("should be able to authenticate", async () => {
     const usersRepository = new InMemoryUsersRepository();
     const sut = new AuthenticateService(usersRepository);
@@ -12,21 +22,24 @@ describe("Authenticate Service", () => {
     await usersRepository.create({
       name: "John Doe",
       email: "johndoe@gmail.com",
-      password_hash: await hash("1223342", 6),
+      password_hash: await hash("mynameisjohndoe", 6),
     });
 
     const { user } = await sut.execute({
       email: "johndoe@gmail.com",
       password: "mynameisjohndoe",
     });
+
+    expect(user.id).toEqual(expect.any(String));
   });
+
   it("should not be able to authenticate with wrong email", async () => {
     const usersRepository = new InMemoryUsersRepository();
     const sut = new AuthenticateService(usersRepository);
 
     await expect(() =>
       sut.execute({
-        email: "johndoe@gmail.com",
+        email: "notjohndoe@gmail.com",
         password: "mynameisjohndoe",
       }),
     ).rejects.toBeInstanceOf(InvalidCredentialsError);
